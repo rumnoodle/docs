@@ -88,3 +88,7 @@ Footnote here [^1]
 
 [^1] Footnote text
 ```
+
+Trying out the footnote syntax [^1].
+
+[^1] The footnote isn't actually needed here but here's to show what it looks like.
