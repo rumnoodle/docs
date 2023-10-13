@@ -39,24 +39,25 @@ It's also possible to create a code block by indenting each line with 4 spaces o
 
 ## Lists and tables
 
-Unordered list:
+### Unordered list:
 
 \* Item one
 
 \* Item two
 
-Ordered list:
+### Ordered list:
 
 1. Item one
 2. Item two
 
-Task list:
+### Task list:
 
 \- \[\] First task
 
 \- \[\] Second task
 
-Table:
+### Table:
+
 |Column one|Column two|
 |----------|----------|
 |value one |value two |
