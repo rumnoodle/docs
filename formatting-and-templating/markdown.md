@@ -92,3 +92,7 @@ Footnote here [^1]
 Trying out the footnote syntax [^1].
 
 [^1] The footnote isn't actually needed here but here's to show what it looks like.
+
+## Sources and resources
+
+[Daring Fireball](https://daringfireball.net/projects/markdown/syntax "Daring fireball's markdown syntax page") has an excellent introduction to markdown with more extensive explanations. (Retrieved 2023-10-14)
