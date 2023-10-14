@@ -30,7 +30,11 @@ $ `docker history <image ID or image name>` shows all layers of an image.
 
 $ `docker run -d -p <container port>:<docker host port> <image name>:<version (optional)>` runs an image. `-d` flag runs it as daemon in the background.
 
-$ `docker ps` lists all running images.
+Useful options for the run command are `-e NAME="value"` for setting an environment variable in the image.
+
+$ `docker stop <container ID or image name>` stops an image from running.
+
+$ `docker ps` lists all running images. `--quiet` flag shows only container ID. also possible to format with the format option e.g. `--format "table {{.ID}}\t{{.Image}}\t{{.Status}}"`.
 
 $ `docker images -a` lists all images.
 
