@@ -97,3 +97,5 @@ Trying out the footnote syntax [^1].
 ## Sources and resources
 
 [Daring Fireball](https://daringfireball.net/projects/markdown/syntax "Daring fireball's markdown syntax page") has an excellent introduction to markdown with more extensive explanations. (Retrieved 2023-10-14)
+
+[Markdown Cheat Sheet](https://www.markdownguide.org/cheat-sheet/ "Markdown Cheat Sheet") from Markdown Guide has a short summary of some common syntax, some don't seem to work as advertised though.
