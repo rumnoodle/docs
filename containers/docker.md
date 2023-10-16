@@ -22,21 +22,55 @@
 
 ### Build an Image
 
+$ `docker build .` to build an image from a Dockerfile in the current directory.
+
 $ `docker build -t <build name>:<version> <location of Dockerfile>` builds an image, example `docker build -t rumnoodle/node:latest .`. Cache can be disabled with the `--no-cache` flag.
+
+Some useful options for build include `--platform linux/amd64` to build an image that wasn't originally built for arm platform.
+
+$ `docker tag <old tag> <new tag>` to change a tag. The first part of the tag needs to match the account on docker hub to be uploadable e.g. `example/some-image:latest` example must match the account name used when loggin in. This adds a tag to the same image, after this command both tags will be available.
 
 $ `docker history <image ID or image name>` shows all layers of an image.
 
+$ `docker export <container ID> -o <outfile.tar>` exports an image to a tar file named by the `-o` option.
+
+$ `docker image inspect <image name>` to inspect an image. It won't pull image so you'll need to do that first if it doesn't exist.
+
+$ `docker run -it --privileged --pid=host debian nsenter -t 1 -m -u -n -i sh` to enter an image and explore the filesystem shown when running the inspect command (see for instance values in GraphDriver.)
+
 ### Run an Image
+
+`docker run` is a combination of the two commands `docker create` and `docker start`.
 
 $ `docker run -d -p <container port>:<docker host port> <image name>:<version (optional)>` runs an image. `-d` flag runs it as daemon in the background.
 
-Useful options for the run command are `-e NAME="value"` for setting an environment variable in the image.
+$ `docker run -ti <image name>:<version> /bin/sh` to start an image and run the shell. `-i` flag says to run in interactive mode.
+
+```
+-e NAME="value : set an environment variable in the image
+--platform linux/amd64 : run an image not compatible with mac new arm platform on a mac
+--name="<container name>" : sets the image name to container name
+-l <label name>="<label value>" : sets a label with label of label name and value of label value
+--rm : remobes the image when it exits
+-t : allocate a pseoudo TTY
+-i : start interactive session, keeps STDIN open
+--hostname="<name of host.com>" : sets hostname to name of host.com
+--read-only=true : makes the root of the filesystem in the container read only
+--tmpfs /tmp:mount,options,size=256M : mounts a temporary file system that is lost on exit with mount options as a comma separated list after the name and a size of 256 megabytes
+--cpu-shares <0 to 1024> : how many cpu shares to allocate to the image when it runs where 1024 is full and 0 is none. A container with 512 will execute a cycle for half as long as a container with 1024.
+--cpuset=0 : run container in CPU 0 of host, "cannot start container" error if number >= number of cores.
+--cpus="<0.01 to number of cores>" : set how much CPU should be available to the image.
+```
 
 $ `docker stop <container ID or image name>` stops an image from running.
 
 $ `docker ps` lists all running images. `--quiet` flag shows only container ID. also possible to format with the format option e.g. `--format "table {{.ID}}\t{{.Image}}\t{{.Status}}"`.
 
-$ `docker images -a` lists all images.
+Labels are searchable e.g. `docker ps -a -f label=<name>=<value>` searches for a label with the name name and value value.
+
+$ `docker images` lists all images. `-a` option lists all images?
+
+$ `docker container update` updates a running docker image.
 
 ### Troubleshooting a Build
 
@@ -51,3 +85,18 @@ $ `docker scout quickview <image name (optional)>` shows vulnerabilities in the 
 $ `docker scout cves <image name (optional)>` lists vulnerabilities.
 
 $ `docker scout recommendations <image name (optional)>` shows update recommendations for base image. Adding the `--org <organization>` option includes the organization's policy results.
+
+
+### Docker Hub
+
+$ `docker login <url to registry unless docker hub (optonal)>` to log in and you will be asked for your username and password.
+
+$ `docker logout` to log out and stop caching credentials in ~/.docker/config.json.
+
+$ `docker push <image name>:<version>` to push an image, e.g. `docker pull example/some-image:latest`.
+
+$ `docker pull <image name>:<version>` to pull an image.
+
+### Other Stuff
+
+$ `docker info` shows information about the current docker runtime.
