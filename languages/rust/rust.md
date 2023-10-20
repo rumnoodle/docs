@@ -43,12 +43,17 @@ $ `rustfmt <filename.rs>` formats a rust file to follow code conventions.
 ```
 use std::io; // a Rust library dependency
 use rand::Rng; // an external dependency added in Cargo.toml
+```
 
-### Variables
+### Variables and Constants
 
 ```
 let variable_name = "value"; // creates an immutable variable
 let mut variable_name = "value"; // creates a mutable variable
+const CONSTANT_ZERO: i32 = 33 * 3 - 99; // creates a constant with the value of the result from the calculation
+{
+    let variable_name = 42; // shadows the first assignment of variable_name until the end of the block
+}
 ```
 
 ### Strings
