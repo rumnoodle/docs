@@ -272,7 +272,7 @@ while true {
 }
 ```
 
-## References
+## Resources and References
 
 * The Rust Programming Language ([https://doc.rust-lang.org/book/](https://doc.rust-lang.org/book/ "Link to the Rust Programming Language book"), retreived: 2023-10-21)
 * [https://crates.io](https://crates.io "Link to crates.io, open source collection of crates"), a collection of open source crates to import and use in projects
