@@ -136,6 +136,43 @@ overflowing_add(...); // returns value and boolean for whether or not there was 
 saturating_add(...); // returns a saturated value if overlow
 ```
 
+### Structs
+
+```
+struct StructName {
+    value_one: bool,
+    value_two: String,
+    value_three: String,
+    value_four: i32,
+}
+
+let sct = StructName {
+    value_two: String::from("Woowoo"),
+    value_one: false,
+    value_three: String::from("Lots of strings in this struct"),
+    value_four: 123,
+};
+
+sct.value_two; // value is "Woowoo"
+sct.value_two = "Doh"; // would work if sct was mutable, doesn't help if only value_two is mutable
+
+fn create_struct(value_one: bool, value_two: String, value_four: i32) -> StructName {
+    StructName {
+        value_one, // use parameter passed to function, shorthand for value_one: value_one
+        value_two,
+        value_three: String::from("This is always the default value."),
+        value_four,
+    }
+}
+
+let sct2 = StructName {
+    value_one: true,
+    ..sct // shorthand for using the remaining values from sct
+};
+// sct is unusable after this as the data is moved to sct2 because sct contains values that are moved to sct2.
+// Had we created new values for all movable data the other values would have been copied and sct still possible to use.
+```
+
 ### Tuples
 
 ```
@@ -237,4 +274,5 @@ while true {
 
 ## References
 
-* The Rust Programming Language
+* The Rust Programming Language ([https://doc.rust-lang.org/book/](https://doc.rust-lang.org/book/ "Link to the Rust Programming Language book"), retreived: 2023-10-21)
+* [https://crates.io](https://crates.io "Link to crates.io, open source collection of crates"), a collection of open source crates to import and use in projects
