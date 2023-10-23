@@ -173,6 +173,84 @@ let sct2 = StructName {
 // Had we created new values for all movable data the other values would have been copied and sct still possible to use.
 ```
 
+#### Methods and Associated Functions
+
+```
+impl StructName {
+    fn some_method(&self, stringval: String) -> String {
+        format!("{}{}", stringval, self.value_three)
+    }
+}
+```
+
+A method always takes self as the first parameter, `self` is short for `self: &Self`. We only borrow self, hence the reference. It is possible for methods to both borrow and take ownership, accept both mutable and immutable values.
+
+It is also possible to create an associated function that isn't a method by omitting the self first parameter. `String::from` is one and is called using two semicolons instead of a dot.
+
+```
+impl StructName {
+    fn new(trees: i32) -> Self {
+        Self {
+            ...
+        }
+    }
+}
+```
+
+It's possible to have more than one impl block.
+
+#### Tuple and Unit Structs
+
+A tuple struct is a tuple with a name e.g. `struct StructName(i32, String)`.
+
+A unit struct is a struct that doesn't have any attributes, mostly used to attach behavior to e.g. `struct StructName;`.
+
+#### Derived traits
+
+```
+#[derive(Debug,AnotherTrait)]
+struct Bee {
+    weight: i32,
+    wingspan: i32,
+}
+
+let bee = Bee { weight: 12, wingspan: 16 };
+println!("{:?}", bee); // derived debug allows printing out debug info like this {:?} or {:#?} for formatted output
+dbg!(&bee); // another way to print and debug
+```
+
+### Enums
+
+```
+enum EnumName {
+    First,
+    Second(i32, i32),
+    Fourth(String),
+    Fifth { x: i32, y: i32 },
+}
+
+impl EnumName {
+    fn some_method(&self) {
+        ...
+    }
+}
+
+let first = EnumName::First;
+
+match value {
+    EnumName::First => ... ,
+    EnumName::Fourth(strval) => {
+        ... // use strval here
+    },
+    _ => ... , // catchall, drop value. If using value name the catchall variable something e.g. other
+    ...
+}
+
+if let EnumName::Fourth(strval) = first {
+    // do something with strval here only if first is an EnumName::Fourth, ignore otherwise
+}
+```
+
 ### Tuples
 
 ```
