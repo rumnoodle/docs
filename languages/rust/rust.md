@@ -77,7 +77,31 @@ It is possible to have more than one immutable reference but if you have immutab
 
 `// This is a comment`
 
-### Imports
+### Modules
+
+```
+// src/lib.rs
+pub mod moduleName;
+
+// src/moduleName.rs or src/moduleName/mod.rs
+pub mod subModuleName;
+
+pub struct StructName {}; // a public struct in the module
+
+// src/moduleName/subModuleName.rs or src/moduleName/subModuleName/mod.rs
+pub fn some_function() {} // pub keyword makes it public
+
+fn some_other_function() {} // private function
+
+// src/main.rs
+use crate::moduleName::subModuleName;
+
+pub mod moduleName; // is this needed?
+
+subModuleName::some_function();
+```
+
+#### Imports
 
 ```
 use std::io; // a Rust library dependency
