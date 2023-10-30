@@ -83,10 +83,31 @@ It is possible to have more than one immutable reference but if you have immutab
 // src/lib.rs
 pub mod moduleName;
 
+pub use subModuleName; // re-exports a submodule from a module making use of the submodule easier as imports can use this shorter path (though not in this case but in deeply nested module structures this can be useful.)
+
 // src/moduleName.rs or src/moduleName/mod.rs
 pub mod subModuleName;
 
-pub struct StructName {}; // a public struct in the module
+pub struct StructName {
+    pub val: String, // values within structs need to be public as well
+    val2: String, // if there's a private value the module needs a public constructor for constructing the struct
+}; // a public struct in the module
+
+impl StructName {
+    pub fn new(val_one: &str) -> StructName {
+        StructName {
+            val: String::from(val_one),
+            val2: String::from("Woowoo"),
+        }
+    }
+}
+
+// Enums and it's values are public as long as the enum is declared public
+pub enum SomeEnum {
+    ValOne,
+    ValTwo,
+    ValThree,
+}
 
 // src/moduleName/subModuleName.rs or src/moduleName/subModuleName/mod.rs
 pub fn some_function() {} // pub keyword makes it public
@@ -106,6 +127,8 @@ subModuleName::some_function();
 ```
 use std::io; // a Rust library dependency
 use rand::Rng; // an external dependency added in Cargo.toml
+use std::{cmp::Ordering, io}; // use of nested ordering
+use std::io::{self, Write}; // use self to import module
 ```
 
 ### Variables and Constants
@@ -122,8 +145,17 @@ const CONSTANT_ZERO: i32 = 33 * 3 - 99; // creates a constant with the value of 
 ### Strings and Characters
 
 ```
-let mut s = String::from("Doh"); //create a mutable string
+let mut s = String::new(); // create an empty mutable string
+let mut s = String::from("Doh"); //create a mutable string, same as writing "Doh".to_string()
 s.push_str(", says Homer"); // append a string literal to the newly created string
+s.push('c'); // append a single character
+
+new_string = first_string + &second_string; // concatenates 2 strings, moves first_string so unusable after
+new_string = format!({first_string}{second_string}"); // another way to write the above without taking ownership
+
+for c in "...".chars() { // there is also a bytes() method
+    // loop over a string, returning a character at a time
+}
 ```
 
 #### Slices and Ranges
@@ -296,6 +328,79 @@ Program panics if it tries to access an element outside the bounds of the array.
 
 It is possible to create slices of arrays, see the "Slices and Ranges" section in Strings.
 
+### Vectors
+
+```
+let v: Vec<i32> = Vec::new();
+let v = vec![1, 2, 3]; // creates a vector with i32 values (default for numbers)
+
+let mut v2 = vec![1, 2, 3];
+v2.push(4);
+let val: &i32 = &v2[1]; //gets second element of vector, panics if out of range
+let val2: Option<&i32> = v2.get(1); // gets second element of vector, does not panic if out of range
+
+match val2 {
+    Some(value) => ... , // do something with value &i32
+    None => ... , // do something when there's no value
+}
+```
+
+The borrow checker works with vectors as well. All values accessed from the vector need to be borrowed or they will be lost to the vector. It is also not possible to mutate a vector where you have borrowed values from it and they are still actice, their lifetimes have not expired.
+
+#### Iterating through a vector
+
+```
+let v = vec![1, 2, 5];
+for i in &v {
+    println!("{i}");
+}
+
+let mut v2 = vec![1, 3, 5];
+for i in &mut v2 {
+    *i += 1; // we have to dereference i here to get to the value of the reference rather than the reference
+}
+```
+
+It's not possible to modify the vector in the for loop, only the values within.
+
+Storing different values in a vector can be done with an enum.
+
+```
+enum SomeEnum {
+    ValOne(i32),
+    ValTwo(String),
+}
+
+let v = vec![
+    ValOne(123),
+    ValTwo(String::from("Woowoo"),
+];
+```
+
+### Hash Map
+
+```
+use std::collections::HashMap;
+
+let mut hm = HashMap::new();
+
+hm.insert(String::from("Homer"), 0); // will replace the value for key Homer if it already exists
+hm.entry(String::from("Homer")).or_insert(0); // inserts only if Homer doesn't exist
+let homer = hm.entry(String::from("Homer")).or_insert(0); // fetches Homer or creates if it doesn't exist
+*homer += 1; // adds one to the value of Homer
+hm.get("Homer").copied().unwrap_or(-1);
+
+for (key, value) in &hm {
+    // iterate over a hashmap
+}
+```
+
+HashMap returns an `Option<&V>` and the copied makes it a value rather than a reference.
+
+Types that implement the `Copy` trait will be copied into the hash map, other values will be moved and can not be used afterwards.
+
+References won't be moved but they must be alive for at least as long as the hash map is alive.
+
 ### Functions
 
 ```
@@ -378,3 +483,5 @@ while true {
 
 * The Rust Programming Language ([https://doc.rust-lang.org/book/](https://doc.rust-lang.org/book/ "Link to the Rust Programming Language book"), retreived: 2023-10-21)
 * [https://crates.io](https://crates.io "Link to crates.io, open source collection of crates"), a collection of open source crates to import and use in projects
+* [https://doc.rust-lang.org/nomicon/](the Rustonomicon "the Rustonomicon"), retrieved: 2023-10-28
+* [https://rust-lang.github.io/api-guidelines/](Rust API Guidelines "Guidelines on how to structure Rust modules and programs"), retrieved 2023-10-28
