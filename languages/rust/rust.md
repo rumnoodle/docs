@@ -24,7 +24,15 @@ $ `cargo update` updates the dependencies in Cargo.toml.
 
 $ `cargo doc --open` opens documentation of project and dependencies in browser.
 
-$ `cargo test` runs all tests in a project.
+$ `cargo test` runs all tests in a project. `--show-output` shows output of successful test runs, if code has println! calls or calls that creates output.
+
+$ `cargo test funs_to_test` runs all tests that have `funs_to_test` in the function name.
+
+$ `cargo test --option-to-test-command -- --option-to-test-binary-after-double-dash`
+
+$ `cargo test -- --ignored` runs all tests annotated with `#[ignored]`. Also possible to run all tests with `--include-ignored`.
+
+$ `cargo test --test file_name_test` runs tests in the integration test file named `file_name_test.rs` in the tests directory.
 
 ## Compiling
 
@@ -106,6 +114,10 @@ mod tests {
             Err(String::from("This test failed.")
         }
     }
+
+    #[test]
+    #[ignore] // ignores this test
+    fn test_fun_five() {}
 }
 ```
 
@@ -114,6 +126,25 @@ Tests that return `Result` are convenient for instance by making it possible to 
 Assertions that can be used in tests include `assert!`, `assert_eq!`, `assert_ne!`. Marcros testing for equality requires that what you're testing implements the `PartialEq` and `Debug` traits.
 
 It's possible to pass a format string to assert functions along with parameters if required after the required parameters.
+
+#### Integration Tests
+
+Integration tests are written in the tests folder in the root of the crate if they exist.
+
+```
+use crate_name;
+
+#[test]
+fn test_function() {
+    crate_name::some_fun();
+}
+```
+
+They are run with all other tests when you execute `cargo test`.
+
+Files in subdirectories in the tests folder are not compiled as separate crates and are thus not run as tests.
+
+Only lib.rs files are possible to test with integration tests. It's not possible to import main.rs and test it.
 
 ### Modules
 
@@ -638,6 +669,10 @@ fn some_fun() Result<i32, io::Error> {
 }
 ```
 Check out the `From` trait to handle propagating a different type of error than the one in the return `Result`.
+
+### Annotations
+
+`#[cfg(some_config)]` means only add following item if a certain configuration option is set.
 
 ## Resources and References
 
