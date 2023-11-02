@@ -12,7 +12,7 @@ $ `rustup doc` opens local documentation in browser.
 
 A lot of external libraries and tools can be found at crates.io, just add them as dependencies to Cargo.toml and use them in your projects.
 
-$ `cargo new <project name>` creates a project with the name project name. With the `--vcs` option it is possible to set which, if any, version control software to use.
+$ `cargo new <project name>` creates a project with the name project name. With the `--vcs` option it is possible to set which, if any, version control software to use. `--lib` creates a library crate.
 
 $ `cargo build` builds a cargo project. `--release` flag makes optimizations for release builds.
 
@@ -24,6 +24,8 @@ $ `cargo update` updates the dependencies in Cargo.toml.
 
 $ `cargo doc --open` opens documentation of project and dependencies in browser.
 
+$ `cargo test` runs all tests in a project.
+
 ## Compiling
 
 $ `rustc <filename.rs>` compiles a rust file.
@@ -32,7 +34,9 @@ $ `rustc <filename.rs>` compiles a rust file.
 
 $ `rustfmt <filename.rs>` formats a rust file to follow code conventions.
 
-## References, Ownership, and Lifetimes
+## Syntax
+
+### References, Ownership, and Lifetimes
 
 Transferral of ownership happens with all values allocated on the heap.
 
@@ -71,11 +75,45 @@ It's only possible to have one mutable reference to the same variable at a time.
 
 It is possible to have more than one immutable reference but if you have immutable references it's not possible to have mutable ones to the same variable for as long as the immutable ones are alive, if there is a mutable reference it must be the only one.
 
-## Syntax
-
 ### Comments
 
 `// This is a comment`
+
+### Tests
+
+```
+#[cfg(test)]
+mod tests {
+    use super::*; // imports all code from the outer module to be used in the tests
+
+    #[test]
+    fn test_fun() {}
+
+    #[test]
+    fn test_fun_two() {
+        panic!("Tests fail if test function panics");
+    }
+
+    #[test]
+    #[should_panic(expected = "Panic text should contain this string")] // test that function that is tested panics
+    fn test_fun_three() {}
+
+    #[test]
+    fn test_fun_four() -> Result<(), String> { // it's also possible to return a Result to indicate success
+        if test_success {
+            Ok(())
+        } else {
+            Err(String::from("This test failed.")
+        }
+    }
+}
+```
+
+Tests that return `Result` are convenient for instance by making it possible to use the `?` operator.
+
+Assertions that can be used in tests include `assert!`, `assert_eq!`, `assert_ne!`. Marcros testing for equality requires that what you're testing implements the `PartialEq` and `Debug` traits.
+
+It's possible to pass a format string to assert functions along with parameters if required after the required parameters.
 
 ### Modules
 
@@ -149,6 +187,7 @@ let mut s = String::new(); // create an empty mutable string
 let mut s = String::from("Doh"); //create a mutable string, same as writing "Doh".to_string()
 s.push_str(", says Homer"); // append a string literal to the newly created string
 s.push('c'); // append a single character
+s.as_str(); // converts a String into a &str
 
 new_string = first_string + &second_string; // concatenates 2 strings, moves first_string so unusable after
 new_string = format!({first_string}{second_string}"); // another way to write the above without taking ownership
@@ -274,6 +313,97 @@ let bee = Bee { weight: 12, wingspan: 16 };
 println!("{:?}", bee); // derived debug allows printing out debug info like this {:?} or {:#?} for formatted output
 dbg!(&bee); // another way to print and debug
 ```
+
+### Generics, Traits and Lifetimes
+
+```
+fn some_fun<T>(val: T) -> T { ... }
+
+struct StructName<T> {
+    one: T,
+    two: T,
+} // both one and two must have same type, to have different generic types use 2 generic type params
+
+impl<T> StructName<T> {
+    fn some_fun(&self) -> &T { ... }
+}
+
+impl StructName<String> {
+    fn some_fun(&self) -> String { ... }
+}
+
+struct StructName<T, U> {
+    one: T,
+    two: U,
+}
+
+enum SomeEnum<T> {
+    One(T),
+    Two,
+}
+```
+
+#### Traits
+
+```
+pub trait TraitName {
+    fn trait_fn_one(&self) -> i32; // also possible to implement default methods with method bodies in traits
+    fn trait_fn_two(&self, i32) -> i32;
+}
+
+impl TraitName for StructName {
+    fn trait_fn_one(&self) -> i32 { ... }
+}
+
+pub fn function_name(item: &impl TraitName) { ... } // to implement a function that accepts a trait as parameter
+pub fn function_name<T: TraitName>(item: &T) { ... } // previous line is syntactic sugar for this
+pub fn function_name(item: &(impl TraitName + AnotherTrait) ... // to specify multiple traits
+pub fn some_function<T, U>(t: &T, u: &U) -> String
+where
+    T: TraitName,
+    U: TraitName + AnotherTrait,
+{
+    ...
+}
+pub fn some_function() -> impl TraitName { ... } // to return a value that implements a trait
+
+impl<T: TraitName> StructName<T> { // implement only for types that have trait TraitName
+    fn some_fun() ...
+}
+
+impl<T: TraitName> SomeTrait for T { ... } // implements SomeTrait for types that implement TraitName
+```
+
+#### Lifetimes
+
+Every reference has a lifetime.
+
+Lifetime annotation in the following function tells the compiler that the return value will live for as long as the parameter passed to the function which lives the shortest amount of time.
+
+In the struct it says that the value in the struct needs to live for at least as long as the struct.
+
+```
+fn some_fun<'a>(x: &'a str, y: &'a str) -> &'a str {
+    if some_cond {
+        x
+    } else {
+        y
+    }
+}
+
+struct StructName<'a> {
+    val: &'a str,
+}
+
+impl<'a> StructName<'a> {
+    fn some_method(&self, some_str: &str) -> &str { // lifetimes not necessary here because lifetime elision rules
+        println!("{}", some_str);
+        self.val
+    }
+}
+```
+
+`'static` lifetimes live for as long as the program lives.
 
 ### Enums
 
@@ -431,6 +561,17 @@ if value >= 12 { // the condition must evaluate to a bool or code won't compile
 
 `let num = if true { 12 } else { 11 };` possible to assign the result of an if expresion to a variable.
 
+```
+let res = match some_value {
+    Ok(res) => {
+        // do something with res
+    },
+    Err(err) => {
+        // do something with err
+    },
+}
+```
+
 ### Iterating and Looping
 
 #### for
@@ -478,6 +619,25 @@ while true {
     println!("Effectively the same as loop but it is possible to test anything.");
 }
 ```
+
+### Errors
+
+```
+panic!("Will cause the program to panic");
+
+// Recoverable errors can be handled with Result enum from std library
+enum Result<T, E> {
+    Ok(T),
+    Err(E),
+}
+
+io::ErrorKind; // has a bunch of errors that can be used
+
+fn some_fun() Result<i32, io::Error> {
+    let val = some.method_call(&mut var)?; // the question mark says return Error if Error, set result to val if Ok
+}
+```
+Check out the `From` trait to handle propagating a different type of error than the one in the return `Result`.
 
 ## Resources and References
 
