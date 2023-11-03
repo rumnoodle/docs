@@ -38,7 +38,7 @@ $ `cargo test --test file_name_test` runs tests in the integration test file nam
 
 $ `rustc <filename.rs>` compiles a rust file.
 
-## Formatting
+## Code Formatting
 
 $ `rustfmt <filename.rs>` formats a rust file to follow code conventions.
 
@@ -667,7 +667,10 @@ io::ErrorKind; // has a bunch of errors that can be used
 fn some_fun() Result<i32, io::Error> {
     let val = some.method_call(&mut var)?; // the question mark says return Error if Error, set result to val if Ok
 }
+
+eprintln!("Print to stderr");
 ```
+
 Check out the `From` trait to handle propagating a different type of error than the one in the return `Result`.
 
 ### Annotations

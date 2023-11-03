@@ -54,3 +54,19 @@ stty echo
 ```
 
 `stty` controls terminal settings, `-echo` means do not print what is typed, `echo` resets. `/dev/tty` is the terminal and the above line reads the input from the terminal into the `password` variable.
+
+### Troubleshooting
+
+#### Tracing
+
+```
+set -x # starts tracing
+
+echo "Lines after tracing has started are being traced."
+
+set +x # stops tracing
+```
+
+## Resources
+
+* Classic Shell Scripting, Arnold Robbins and Nelson H. F. Beebe, O'Reilly 2005
