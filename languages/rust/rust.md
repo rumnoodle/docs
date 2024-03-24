@@ -18,7 +18,7 @@ $ `cargo build` builds a cargo project. `--release` flag makes optimizations for
 
 $ `cargo check` checks that it compiles but doesn't build it. Good when developing as it runs faster than build.
 
-$ `cargo run` runs a cargo project and builds it if it hasn't been built.
+$ `cargo run` runs a cargo project and builds it if it hasn't been built. `--release` flag works as in build and `-q` flag silences compiler messages.
 
 $ `cargo update` updates the dependencies in Cargo.toml.
 
@@ -683,3 +683,4 @@ Check out the `From` trait to handle propagating a different type of error than 
 * [https://crates.io](https://crates.io "Link to crates.io, open source collection of crates"), a collection of open source crates to import and use in projects
 * [https://doc.rust-lang.org/nomicon/](the Rustonomicon "the Rustonomicon"), retrieved: 2023-10-28
 * [https://rust-lang.github.io/api-guidelines/](Rust API Guidelines "Guidelines on how to structure Rust modules and programs"), retrieved 2023-10-28
+* ([https://doc.rust-lang.org/std/prelude/index.html](std::prelude "The prelude with things that are automatically loaded into every Rust program"), not retrieved

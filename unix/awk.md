@@ -16,6 +16,8 @@ An awk command looks roughly like this `awk '/pattern/ { action }' input.sources
 
 `/dev/stdin`, `/dev/stdout`, `/dev/stderr` are all available in an awk program.
 
+It's possible to get input from files and terminals with `getline` command. Output can be done with `print` and `printf`. Remember to close all files with `close`.
+
 ## BEGIN and END
 
 It is possible to supply BEGIN and END patterns that are executed once at the beginning and at the end respectively.
@@ -69,8 +71,51 @@ It is possible to define ranges with `start of range, end of range` where start 
 
 `print $1, $4, $5 # prints multiple fields separated by OFS`. `OFS = "\n" ; $1 = $1 ; print $0`, the reassignment is needed to print all fields on a new line because we need to assign at least one of the fields for the new OFS to take effect.
 
+### Conditionals
+
+```
+if (expression)
+    # do something
+else if (expression)
+    # do something
+else
+    # do something
+```
+
+Testing for array membership should be done like this `if ("something" in array)` rather than `array["something"] ...` as the latter creates the array item if it doesn't exist.
+
+### Looping
+
+```
+for (k = 1; k <= 10; k++) { ... }
+
+for (i in items)
+    # do something with items[i]
+```
+
+## Functions
+
+```
+function name(arg1, arg2, ...) {
+    ...
+}
+```
+
+Functions can have a return expression.
+
+Variables used within a function are global. Arguments passed are local to the function and it is possible to pass fewer arguments than declared so a way to declare a local variable is to add it to the arguments list.
+
+## Running External Programs
+
+External programs can be run with the `system` command/function.
+
 ## Examples
 
 Word count: `awk '{ Characters += length($0) + 1 ; Words += NF } END { print NR, Words, Characters }' filename.file`.
 
 Convert windows newlines to unix newlines: `awk 'BEGIN {RS = "\r\n" } { print }' file.name`.
+
+## Resources
+
+Classic Shell Scripting, Arnold Robbins & Nelson H. F. Beebe, O'Reilly 2005
+

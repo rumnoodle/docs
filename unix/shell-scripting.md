@@ -132,7 +132,7 @@ It's a good practice to quote all arguments to the test function as arguments ar
 ```
 for i in "$@" # can be written 'for i' and '$@' is implied
 do
-    # do something here
+    # do something here with $i
 done
 
 while test
